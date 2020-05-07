@@ -7,8 +7,8 @@
  */
 
 import React, { Component } from 'react';
-import Colors from '../assets/colors'
-import Fonts from '../assets/fonts'
+import Colors from '../../assets/colors'
+import Fonts from '../../assets/fonts'
 
 import {
   StyleSheet,
@@ -20,7 +20,7 @@ import {
   StatusBar
 } from 'react-native';
 
-export default class SignUp extends Component {
+export default class Login extends Component {
   constructor(props) {
     super(props);
   };
@@ -32,7 +32,7 @@ export default class SignUp extends Component {
             backgroundColor="#ffa24e" 
             barStyle="light-content"/>
 
-          <Text style={styles.title}>Make a Nookeroo account</Text>
+          <Text style={styles.title}>Welcome to Nookeroo</Text>
 
           <TextInput 
             style={styles.input}
@@ -48,13 +48,19 @@ export default class SignUp extends Component {
             activeOpacity={0.5}
             underlayColor={Colors.lightdark}
             onPress={() => alert('Pressed!')}>
-            <Text style={styles.btnTextWhite}>Sign Up</Text>
+            <Text style={styles.btnTextWhite}>Login</Text>
           </TouchableHighlight>
 
           <TouchableOpacity
             style={styles.btnNoBackground} 
-            onPress={() => alert('Pressed!')}>
-            <Text style={styles.btnTextBlack}>Already have an account? Log In Here</Text>
+            onPress={() => this.props.navigation.navigate('SignUp')}>
+            <Text style={styles.btnTextBlack}>Don't have an account? Sign Up Here</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.btnNoBackground} 
+            onPress={() => this.props.navigation.navigate('ForgotPassword')}>
+            <Text style={styles.btnTextBlack}>Recover your password</Text>
           </TouchableOpacity>
 
       </View>
@@ -88,6 +94,7 @@ const styles = StyleSheet.create({
     padding: 16,
     width: "50%",
     borderRadius: 20,
+    marginTop: 10,
     marginBottom: 10
   },
   btnNoBackground: {

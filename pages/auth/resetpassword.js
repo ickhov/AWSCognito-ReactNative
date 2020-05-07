@@ -7,20 +7,19 @@
  */
 
 import React, { Component } from 'react';
-import Colors from '../assets/colors'
-import Fonts from '../assets/fonts'
+import Colors from '../../assets/colors'
+import Fonts from '../../assets/fonts'
 
 import {
   StyleSheet,
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   TouchableHighlight,
   StatusBar
 } from 'react-native';
 
-export default class Login extends Component {
+export default class ResetPassword extends Component {
   constructor(props) {
     super(props);
   };
@@ -32,15 +31,15 @@ export default class Login extends Component {
             backgroundColor="#ffa24e" 
             barStyle="light-content"/>
 
-          <Text style={styles.title}>Welcome to Nookeroo</Text>
+          <Text style={styles.title}>Let's set a new password</Text>
 
           <TextInput 
             style={styles.input}
-            placeholder='Email Address'/>
+            placeholder='Reset Code'/>
 
           <TextInput 
             style={styles.input}
-            placeholder='Password'
+            placeholder='New Password'
             secureTextEntry/>
 
           <TouchableHighlight 
@@ -48,20 +47,8 @@ export default class Login extends Component {
             activeOpacity={0.5}
             underlayColor={Colors.lightdark}
             onPress={() => alert('Pressed!')}>
-            <Text style={styles.btnTextWhite}>Login</Text>
+            <Text style={styles.btnTextWhite}>Done</Text>
           </TouchableHighlight>
-
-          <TouchableOpacity
-            style={styles.btnNoBackground} 
-            onPress={() => alert('Pressed!')}>
-            <Text style={styles.btnTextBlack}>Don't have an account? Sign Up Here</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.btnNoBackground} 
-            onPress={() => alert('Pressed!')}>
-            <Text style={styles.btnTextBlack}>Recover your password</Text>
-          </TouchableOpacity>
 
       </View>
     );
@@ -94,24 +81,12 @@ const styles = StyleSheet.create({
     padding: 16,
     width: "50%",
     borderRadius: 20,
-    marginBottom: 10
-  },
-  btnNoBackground: {
-    backgroundColor: Colors.none,
-    padding: 8,
-    width: "90%"
+    marginTop: 10
   },
   btnTextWhite: {
     fontFamily: Fonts.normal,
     fontSize: 16,
     textAlign: 'center',
     color: Colors.white
-  },
-  btnTextBlack: {
-    fontFamily: Fonts.normal,
-    fontSize: 16,
-    textAlign: 'center',
-    color: Colors.black,
-    textDecorationLine: 'underline'
   }
 });

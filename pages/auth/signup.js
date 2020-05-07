@@ -7,8 +7,8 @@
  */
 
 import React, { Component } from 'react';
-import Colors from '../assets/colors'
-import Fonts from '../assets/fonts'
+import Colors from '../../assets/colors'
+import Fonts from '../../assets/fonts'
 
 import {
   StyleSheet,
@@ -20,7 +20,7 @@ import {
   StatusBar
 } from 'react-native';
 
-export default class EmailConfirmation extends Component {
+export default class SignUp extends Component {
   constructor(props) {
     super(props);
   };
@@ -32,7 +32,7 @@ export default class EmailConfirmation extends Component {
             backgroundColor="#ffa24e" 
             barStyle="light-content"/>
 
-          <Text style={styles.title}>Please confirm your email</Text>
+          <Text style={styles.title}>Create a Nookeroo Account</Text>
 
           <TextInput 
             style={styles.input}
@@ -40,24 +40,22 @@ export default class EmailConfirmation extends Component {
 
           <TextInput 
             style={styles.input}
-            placeholder='Code'
-            keyboardType='number-pad'/>
+            placeholder='Password'
+            secureTextEntry/>
 
           <TouchableHighlight 
             style={styles.btn} 
             activeOpacity={0.5}
             underlayColor={Colors.lightdark}
-            onPress={() => alert('Pressed!')}>
-            <Text style={styles.btnTextWhite}>Continue</Text>
+            onPress={() => this.props.navigation.navigate('EmailConfirmation')}>
+            <Text style={styles.btnTextWhite}>Sign Up</Text>
           </TouchableHighlight>
 
-          <TouchableHighlight 
-            style={styles.btn} 
-            activeOpacity={0.5}
-            underlayColor={Colors.lightdark}
-            onPress={() => alert('Pressed!')}>
-            <Text style={styles.btnTextWhite}>Resend the code</Text>
-          </TouchableHighlight>
+          <TouchableOpacity
+            style={styles.btnNoBackground} 
+            onPress={() => this.props.navigation.navigate('Login')}>
+            <Text style={styles.btnTextBlack}>Already have an account? Log In Here</Text>
+          </TouchableOpacity>
 
       </View>
     );
@@ -90,12 +88,25 @@ const styles = StyleSheet.create({
     padding: 16,
     width: "50%",
     borderRadius: 20,
+    marginTop: 10,
     marginBottom: 10
+  },
+  btnNoBackground: {
+    backgroundColor: Colors.none,
+    padding: 8,
+    width: "90%"
   },
   btnTextWhite: {
     fontFamily: Fonts.normal,
     fontSize: 16,
     textAlign: 'center',
     color: Colors.white
+  },
+  btnTextBlack: {
+    fontFamily: Fonts.normal,
+    fontSize: 16,
+    textAlign: 'center',
+    color: Colors.black,
+    textDecorationLine: 'underline'
   }
 });
