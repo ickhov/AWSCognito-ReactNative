@@ -19,11 +19,29 @@ import {
 import Colors from '../../assets/colors';
 import Fonts from '../../assets/fonts';
 
+import Amplify, { Auth } from 'aws-amplify';
+import awsConfig from '../../src/aws-exports';
+
+Amplify.configure({Auth: awsConfig});
 
 export default class ForgotPassword extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      email: '',
+      errorMessage: ''
+    };
+    
+    this.resetPassword = this.resetPassword.bind(this);
   };
+
+  resetPassword = () => {
+    Auth.forgotPassword(this.state.email)
+      .then(() => { this.props.navigation.navigate('ResetPassword', { 
+        email: this.state.email 
+      })})
+      .catch(err => { this.setState({ errorMessage: err.message }) })
+  }
 
   render() {
     return (
@@ -36,20 +54,28 @@ export default class ForgotPassword extends Component {
 
           <TextInput 
             style={styles.input}
-            placeholder='Email Address'/>
+            placeholder='Email Address'
+            onChangeText={(email) => this.setState({email})}
+            value={ this.state.email }
+            keyboardType='email-address'
+            autoCapitalize='none'/>
+
+          <Text style={styles.errorText}>
+            {this.state.errorMessage}
+          </Text>
 
           <TouchableHighlight 
             style={styles.btn} 
             activeOpacity={0.5}
             underlayColor={Colors.lightdark}
-            onPress={() => this.props.navigation.navigate('ResetPassword')}>
+            onPress={this.resetPassword}>
             <Text style={styles.btnTextWhite}>Recover my password</Text>
           </TouchableHighlight>
 
           <TouchableOpacity
             style={styles.btnNoBackground} 
             onPress={() => this.props.navigation.navigate('Login')}>
-            <Text style={styles.btnTextBlack}>Log In Here</Text>
+            <Text style={styles.btnTextBlack}>Back to Login</Text>
           </TouchableOpacity>
 
       </View>
@@ -103,5 +129,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.black,
     textDecorationLine: 'underline'
+  },
+  errorText: {
+    fontFamily: Fonts.normal,
+    fontSize: 16,
+    textAlign: 'center',
+    color: Colors.error
   }
 });
