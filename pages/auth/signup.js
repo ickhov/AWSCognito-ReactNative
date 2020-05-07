@@ -20,10 +20,44 @@ import {
   StatusBar
 } from 'react-native';
 
+import Amplify, { Auth } from 'aws-amplify';
+import awsConfig from '../../src/aws-exports';
+
+Amplify.configure({Auth: awsConfig});
+
 export default class SignUp extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      email: '',
+      password: '',
+      errorMessage: ''
+    };
+    
+    this.signUpUser = this.signUpUser.bind(this);
   };
+
+  signUpUser = () => {
+    if (this.state.email != '' && this.state.password != '') {
+      Auth.signUp({
+        username: this.state.email,
+        password: this.state.password,
+        attributes: {
+          email: this.state.email
+        }
+      })
+        .then(data => { this.props.navigation.navigate('EmailConfirmation', { 
+          email: this.state.email 
+        })})
+        .catch(err => { this.setState({ errorMessage: err.message }) })
+    } else if (this.state.email == '' && this.state.password == '') {
+      this.setState({errorMessage: 'Please enter an email and a password'})
+    } else if (this.state.email == '') {
+      this.setState({errorMessage: 'Please enter an email'})
+    } else {
+      this.setState({errorMessage: 'Please enter a password'})
+    }
+  }
 
   render() {
     return (
@@ -36,18 +70,29 @@ export default class SignUp extends Component {
 
           <TextInput 
             style={styles.input}
-            placeholder='Email Address'/>
+            placeholder='Email Address'
+            onChangeText={(email) => this.setState({email})}
+            value={ this.state.email }
+            keyboardType='email-address'
+            autoCapitalize='none'/>
 
           <TextInput 
             style={styles.input}
             placeholder='Password'
-            secureTextEntry/>
+            secureTextEntry
+            onChangeText={(password) => this.setState({password})}
+            value={this.state.password}
+            onFocus={() => { this.setState({errorMessage: 'Passwords must be at least 8 characters and contain lowercase and uppercase letters, special characters, and numbers'}) }}/>
+
+          <Text style={styles.errorText}>
+            {this.state.errorMessage}
+          </Text>
 
           <TouchableHighlight 
             style={styles.btn} 
             activeOpacity={0.5}
             underlayColor={Colors.lightdark}
-            onPress={() => this.props.navigation.navigate('EmailConfirmation')}>
+            onPress={this.signUpUser}>
             <Text style={styles.btnTextWhite}>Sign Up</Text>
           </TouchableHighlight>
 
@@ -108,5 +153,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.black,
     textDecorationLine: 'underline'
+  },
+  errorText: {
+    fontFamily: Fonts.normal,
+    fontSize: 16,
+    textAlign: 'center',
+    color: Colors.error
   }
 });

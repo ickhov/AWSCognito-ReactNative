@@ -20,6 +20,11 @@ import {
   StatusBar
 } from 'react-native';
 
+import Amplify, { Auth } from 'aws-amplify';
+import awsConfig from '../../src/aws-exports';
+
+Amplify.configure({Auth: awsConfig});
+
 export default class Login extends Component {
   constructor(props) {
     super(props);
@@ -29,7 +34,22 @@ export default class Login extends Component {
       errorMessage: ''
     };
     
+    this.signInUser = this.signInUser.bind(this);
   };
+
+  signInUser = () => {
+    if (this.state.email != '' && this.state.password != '') {
+      Auth.signIn(this.state.email, this.state.password)
+        .then(user => { this.props.navigation.navigate('Feed', {user: user}) })
+        .catch(err => { this.setState({ errorMessage: err.message }) })
+    } else if (this.state.email == '' && this.state.password == '') {
+      this.setState({errorMessage: 'Please enter your email and password'})
+    } else if (this.state.email == '') {
+      this.setState({errorMessage: 'Please enter your email'})
+    } else {
+      this.setState({errorMessage: 'Please enter your password'})
+    }
+  }
 
   render() {
     return (
@@ -42,18 +62,28 @@ export default class Login extends Component {
 
           <TextInput 
             style={styles.input}
-            placeholder='Email Address'/>
+            placeholder='Email Address'
+            onChangeText={(email) => this.setState({email})}
+            value={ this.state.email }
+            keyboardType='email-address'
+            autoCapitalize='none'/>
 
           <TextInput 
             style={styles.input}
             placeholder='Password'
-            secureTextEntry/>
+            secureTextEntry
+            onChangeText={(password) => this.setState({password})}
+            value={this.state.password}/>
+
+          <Text style={styles.errorText}>
+            {this.state.errorMessage}
+          </Text>
 
           <TouchableHighlight 
             style={styles.btn} 
             activeOpacity={0.5}
             underlayColor={Colors.lightdark}
-            onPress={() => alert('Pressed!')}>
+            onPress={this.signInUser}>
             <Text style={styles.btnTextWhite}>Login</Text>
           </TouchableHighlight>
 
@@ -120,5 +150,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.black,
     textDecorationLine: 'underline'
+  },
+  errorText: {
+    fontFamily: Fonts.normal,
+    fontSize: 16,
+    textAlign: 'center',
+    color: Colors.error
   }
 });

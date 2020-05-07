@@ -5,6 +5,7 @@ const Colors = {
     lightdark: '#9e4b00',
     white: '#fff',
     black: '#000',
+    error: '#fff',
     none: 'transparent'
   }
   

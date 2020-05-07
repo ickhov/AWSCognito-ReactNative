@@ -20,10 +20,36 @@ import {
   StatusBar
 } from 'react-native';
 
+import Amplify, { Auth } from 'aws-amplify';
+import awsConfig from '../../src/aws-exports';
+
+Amplify.configure({Auth: awsConfig});
+
 export default class ResetPassword extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      email: this.props.route.params.email,
+      resetCode: '',
+      newPassword: '',
+      errorMessage: ''
+    };
+    
+    this.resetPassword = this.resetPassword.bind(this);
+    this.resendCode = this.resendCode.bind(this);
   };
+
+  resetPassword = () => {
+    Auth.forgotPasswordSubmit(this.state.email, this.state.resetCode, this.state.newPassword)
+      .then(() => this.props.navigation.navigate('Login'))
+      .catch(err => { this.setState({ errorMessage: err.message }) })
+  }
+
+  resendCode = () => {
+    Auth.forgotPassword(this.state.email)
+      .catch(err => { this.setState({ errorMessage: err.message }) })
+  }
 
   render() {
     return (
@@ -36,19 +62,28 @@ export default class ResetPassword extends Component {
 
           <TextInput 
             style={styles.input}
-            placeholder='Reset Code'/>
+            placeholder='Reset Code'
+            onChangeText={(resetCode) => this.setState({resetCode})}
+            value={ this.state.resetCode }
+            keyboardType='numeric'/>
 
           <TextInput 
             style={styles.input}
-            placeholder='New Password'
-            secureTextEntry/>
+            placeholder='Password'
+            secureTextEntry
+            onChangeText={(newPassword) => this.setState({newPassword})}
+            value={this.state.newPassword}/>
+
+          <Text style={styles.errorText}>
+            {this.state.errorMessage}
+          </Text>
 
           <View style={styles.btnContainer}>
             <TouchableHighlight 
               style={styles.btn} 
               activeOpacity={0.5}
               underlayColor={Colors.lightdark}
-              onPress={() => alert('Pressed!')}>
+              onPress={this.resendCode}>
               <Text style={styles.btnTextWhite}>Resend Code</Text>
             </TouchableHighlight>
 
@@ -56,7 +91,7 @@ export default class ResetPassword extends Component {
               style={styles.btn} 
               activeOpacity={0.5}
               underlayColor={Colors.lightdark}
-              onPress={() => alert('Pressed!')}>
+              onPress={this.resetPassword}>
               <Text style={styles.btnTextWhite}>Reset Password</Text>
             </TouchableHighlight>
           </View>
@@ -64,7 +99,7 @@ export default class ResetPassword extends Component {
           <TouchableOpacity
             style={styles.btnNoBackground} 
             onPress={() => this.props.navigation.navigate('Login')}>
-            <Text style={styles.btnTextBlack}>Log In Here</Text>
+            <Text style={styles.btnTextBlack}>Back to Login</Text>
           </TouchableOpacity>
 
       </View>
@@ -123,5 +158,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.black,
     textDecorationLine: 'underline'
+  },
+  errorText: {
+    fontFamily: Fonts.normal,
+    fontSize: 16,
+    textAlign: 'center',
+    color: Colors.error
   }
 });
