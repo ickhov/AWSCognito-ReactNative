@@ -43,21 +43,23 @@ export default class EmailConfirmation extends Component {
             placeholder='Confirmation Code'
             keyboardType='number-pad'/>
 
-          <TouchableHighlight 
-            style={styles.btn} 
-            activeOpacity={0.5}
-            underlayColor={Colors.lightdark}
-            onPress={() => alert('Pressed!')}>
-            <Text style={styles.btnTextWhite}>Continue</Text>
-          </TouchableHighlight>
+          <View style={styles.btnContainer}>
+            <TouchableHighlight 
+              style={styles.btn} 
+              activeOpacity={0.5}
+              underlayColor={Colors.lightdark}
+              onPress={() => alert('Pressed!')}>
+              <Text style={styles.btnTextWhite}>Resend Code</Text>
+            </TouchableHighlight>
 
-          <TouchableHighlight 
-            style={styles.btn} 
-            activeOpacity={0.5}
-            underlayColor={Colors.lightdark}
-            onPress={() => alert('Pressed!')}>
-            <Text style={styles.btnTextWhite}>Resend the code</Text>
-          </TouchableHighlight>
+            <TouchableHighlight 
+              style={styles.btn} 
+              activeOpacity={0.5}
+              underlayColor={Colors.lightdark}
+              onPress={() => alert('Pressed!')}>
+              <Text style={styles.btnTextWhite}>Continue</Text>
+            </TouchableHighlight>
+          </View>
 
       </View>
     );
@@ -85,10 +87,15 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderRadius: 20
   },
+  btnContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '90%'
+  },
   btn: {
     backgroundColor: Colors.dark,
     padding: 16,
-    width: "50%",
+    width: "45%",
     borderRadius: 20,
     marginTop: 10
   },

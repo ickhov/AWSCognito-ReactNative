@@ -16,6 +16,7 @@ import {
   Text,
   TextInput,
   TouchableHighlight,
+  TouchableOpacity,
   StatusBar
 } from 'react-native';
 
@@ -42,13 +43,29 @@ export default class ResetPassword extends Component {
             placeholder='New Password'
             secureTextEntry/>
 
-          <TouchableHighlight 
-            style={styles.btn} 
-            activeOpacity={0.5}
-            underlayColor={Colors.lightdark}
-            onPress={() => alert('Pressed!')}>
-            <Text style={styles.btnTextWhite}>Done</Text>
-          </TouchableHighlight>
+          <View style={styles.btnContainer}>
+            <TouchableHighlight 
+              style={styles.btn} 
+              activeOpacity={0.5}
+              underlayColor={Colors.lightdark}
+              onPress={() => alert('Pressed!')}>
+              <Text style={styles.btnTextWhite}>Resend Code</Text>
+            </TouchableHighlight>
+
+            <TouchableHighlight 
+              style={styles.btn} 
+              activeOpacity={0.5}
+              underlayColor={Colors.lightdark}
+              onPress={() => alert('Pressed!')}>
+              <Text style={styles.btnTextWhite}>Reset Password</Text>
+            </TouchableHighlight>
+          </View>
+
+          <TouchableOpacity
+            style={styles.btnNoBackground} 
+            onPress={() => this.props.navigation.navigate('Login')}>
+            <Text style={styles.btnTextBlack}>Log In Here</Text>
+          </TouchableOpacity>
 
       </View>
     );
@@ -76,11 +93,22 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderRadius: 20
   },
+  btnContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '90%'
+  },
   btn: {
     backgroundColor: Colors.dark,
     padding: 16,
-    width: "50%",
+    width: "45%",
     borderRadius: 20,
+    marginTop: 10
+  },
+  btnNoBackground: {
+    backgroundColor: Colors.none,
+    padding: 8,
+    width: "45%",
     marginTop: 10
   },
   btnTextWhite: {
@@ -88,5 +116,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     color: Colors.white
+  },
+  btnTextBlack: {
+    fontFamily: Fonts.normal,
+    fontSize: 16,
+    textAlign: 'center',
+    color: Colors.black,
+    textDecorationLine: 'underline'
   }
 });

@@ -7,22 +7,30 @@
  */
 
 import React, { Component } from 'react';
-import { 
-    StatusBar, 
-    StyleSheet, 
-    Text, 
-    TextInput, 
-    TouchableHighlight, 
-    TouchableOpacity,
-    View 
+import Colors from '../../assets/colors'
+import Fonts from '../../assets/fonts'
+
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableHighlight,
+  StatusBar
 } from 'react-native';
-import Colors from '../../assets/colors';
-import Fonts from '../../assets/fonts';
 
-
-export default class ForgotPassword extends Component {
+export default class Login extends Component {
   constructor(props) {
     super(props);
+  };
+
+  goToSignUp = () => {
+    this.props.navigation.navigate('SignUp');
+  };
+
+  goToForgotPassword = () => {
+    this.props.navigation.navigate('ForgotPassword');
   };
 
   render() {
@@ -32,24 +40,35 @@ export default class ForgotPassword extends Component {
             backgroundColor="#ffa24e" 
             barStyle="light-content"/>
 
-          <Text style={styles.title}>What's your email?</Text>
+          <Text style={styles.title}>Welcome to Nookeroo Feed Page</Text>
 
           <TextInput 
             style={styles.input}
             placeholder='Email Address'/>
 
+          <TextInput 
+            style={styles.input}
+            placeholder='Password'
+            secureTextEntry/>
+
           <TouchableHighlight 
             style={styles.btn} 
             activeOpacity={0.5}
             underlayColor={Colors.lightdark}
-            onPress={() => this.props.navigation.navigate('ResetPassword')}>
-            <Text style={styles.btnTextWhite}>Recover my password</Text>
+            onPress={() => alert('Pressed!')}>
+            <Text style={styles.btnTextWhite}>Login</Text>
           </TouchableHighlight>
 
           <TouchableOpacity
             style={styles.btnNoBackground} 
-            onPress={() => this.props.navigation.navigate('Login')}>
-            <Text style={styles.btnTextBlack}>Log In Here</Text>
+            onPress={() => this.props.navigation.navigate('SignUp')}>
+            <Text style={styles.btnTextBlack}>Don't have an account? Sign Up Here</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.btnNoBackground} 
+            onPress={() => this.goToForgotPassword}>
+            <Text style={styles.btnTextBlack}>Reset my password</Text>
           </TouchableOpacity>
 
       </View>

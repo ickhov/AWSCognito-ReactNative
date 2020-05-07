@@ -23,6 +23,12 @@ import {
 export default class Login extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      email: '',
+      password: '',
+      errorMessage: ''
+    };
+    
   };
 
   render() {
@@ -60,7 +66,7 @@ export default class Login extends Component {
           <TouchableOpacity
             style={styles.btnNoBackground} 
             onPress={() => this.props.navigation.navigate('ForgotPassword')}>
-            <Text style={styles.btnTextBlack}>Recover your password</Text>
+            <Text style={styles.btnTextBlack}>Reset my password</Text>
           </TouchableOpacity>
 
       </View>
