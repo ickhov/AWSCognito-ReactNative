@@ -20,7 +20,7 @@ import {
   StatusBar
 } from 'react-native';
 
-import PopUpDialog from '../components/popUpDialog'
+import PopUpDialog from '../components/popUpDialog';
 
 import Amplify, { Auth } from 'aws-amplify';
 import awsConfig from '../../src/aws-exports';
@@ -52,27 +52,27 @@ export default class Login extends Component {
           errorMessage: err.message,
           showAlert: true
         }) })
-    } else {
-      if (this.state.email == '' && this.state.password == '') {
-        this.setState({
-          emailBorderColor: Colors.error, 
-          passwordBorderColor: Colors.error,
-          errorMessage: 'Please enter your email and password.',
-          showAlert: true
-        })
-      } else if (this.state.email == '') {
-        this.setState({
-          emailBorderColor: Colors.error, 
-          errorMessage: 'Please enter your email.',
-          showAlert: true
-        })
-      } else if (this.state.password == '') {
-        this.setState({
-          passwordBorderColor: Colors.error,
-          errorMessage: 'Please enter your password.',
-          showAlert: true
-        })
-      }
+    } else if (this.state.email == '' && this.state.password == '') {
+      this.setState({
+        emailBorderColor: Colors.error, 
+        passwordBorderColor: Colors.error,
+        errorMessage: 'Please enter your email and password.',
+        showAlert: true
+      })
+    } else if (this.state.email == '') {
+      this.setState({
+        emailBorderColor: Colors.error, 
+        passwordBorderColor: Colors.white,
+        errorMessage: 'Please enter your email.',
+        showAlert: true
+      })
+    } else if (this.state.password == '') {
+      this.setState({
+        emailBorderColor: Colors.white,
+        passwordBorderColor: Colors.error,
+        errorMessage: 'Please enter your password.',
+        showAlert: true
+      })
     }
   }
 
@@ -87,8 +87,7 @@ export default class Login extends Component {
 
           <TextInput 
             style={[styles.input, {
-              borderColor: this.state.emailBorderColor,
-              borderWidth: 4
+              borderColor: this.state.emailBorderColor
             }]}
             placeholder='Email Address'
             onChangeText={(email) => this.setState({email})}
@@ -98,8 +97,7 @@ export default class Login extends Component {
 
           <TextInput 
             style={[styles.input, {
-              borderColor: this.state.passwordBorderColor,
-              borderWidth: 4
+              borderColor: this.state.passwordBorderColor
             }]}
             placeholder='Password'
             secureTextEntry
@@ -159,7 +157,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     padding: 13,
     marginBottom: 8,
-    borderRadius: 20
+    borderRadius: 20,
+    borderWidth: 4
   },
   btn: {
     backgroundColor: Colors.dark,

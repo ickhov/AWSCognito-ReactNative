@@ -1,9 +1,5 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
+ * Email Confirmation Page
  */
 
 import React, { Component } from 'react';
@@ -19,6 +15,8 @@ import {
   StatusBar
 } from 'react-native';
 
+import PopUpDialog from '../components/popUpDialog';
+
 import Amplify, { Auth } from 'aws-amplify';
 import awsConfig from '../../src/aws-exports';
 
@@ -29,9 +27,14 @@ export default class EmailConfirmation extends Component {
     super(props);
 
     this.state = {
+      // grab the email from the sign up page
       email: this.props.route.params.email,
       confirmationCode: '',
-      errorMessage: ''
+      errorMessage: '',
+      popUpTitle: '',
+      emailBorderColor: Colors.white,
+      confirmationCodeBorderColor: Colors.white,
+      showAlert: false
     };
     
     this.confirmUser = this.confirmUser.bind(this);
@@ -42,19 +45,53 @@ export default class EmailConfirmation extends Component {
     if (this.state.email != '' && this.state.confirmationCode != '') {
       Auth.confirmSignUp(this.state.email, this.state.confirmationCode)
         .then(() => { this.props.navigation.navigate('Feed') })
-        .catch(err => { this.setState({ errorMessage: err.message }) })
+        .catch(err => { this.setState({ 
+          emailBorderColor: Colors.white,
+          confirmationCodeBorderColor: Colors.white,
+          errorMessage: err.message,
+          popUpTitle: 'Something went wrong!',
+          showAlert: true
+        }) })
     } else if (this.state.email == '' && this.state.confirmationCode == '') {
-      this.setState({errorMessage: 'Please enter your email and confirmation code'})
+      this.setState({
+        emailBorderColor: Colors.error, 
+        confirmationCodeBorderColor: Colors.error,
+        errorMessage: 'Please enter your email and confirmation code.',
+        popUpTitle: 'Something went wrong!',
+        showAlert: true
+      })
     } else if (this.state.email == '') {
-      this.setState({errorMessage: 'Please enter your email'})
-    } else {
-      this.setState({errorMessage: 'Please enter the confirmation code'})
+      this.setState({
+        emailBorderColor: Colors.error, 
+        confirmationCodeBorderColor: Colors.white,
+        errorMessage: 'Please enter your email.',
+        popUpTitle: 'Something went wrong!',
+        showAlert: true
+      })
+    } else if (this.state.confirmationCode == '') {
+      this.setState({
+        emailBorderColor: Colors.white,
+        confirmationCodeBorderColor: Colors.error,
+        errorMessage: 'Please enter your confirmation code.',
+        popUpTitle: 'Something went wrong!',
+        showAlert: true
+      })
     }
   }
 
   resendCode = () => {
     Auth.resendSignUp(this.state.email)
-      .catch(err => { this.setState({ errorMessage: err.message }) })
+      .then(() => this.setState({ 
+        errorMessage: 'Your new confirmation code has been sent.',
+        popUpTitle: 'Success',
+        showAlert: true
+      }))
+      .catch(err => { this.setState({ 
+        emailBorderColor: Colors.white,
+        confirmationCodeBorderColor: Colors.white,
+        errorMessage: err.message,
+        showAlert: true
+      }) })
   }
 
   render() {
@@ -67,7 +104,9 @@ export default class EmailConfirmation extends Component {
           <Text style={styles.title}>Please confirm your email</Text>
 
           <TextInput 
-            style={styles.input}
+            style={[styles.input, {
+              borderColor: this.state.emailBorderColor
+            }]}
             placeholder='Email Address'
             onChangeText={(email) => this.setState({email})}
             value={ this.state.email }
@@ -75,15 +114,13 @@ export default class EmailConfirmation extends Component {
             autoCapitalize='none'/>
 
           <TextInput 
-            style={styles.input}
+            style={[styles.input, {
+              borderColor: this.state.confirmationCodeBorderColor
+            }]}
             placeholder='Confirmation Code'
             onChangeText={(confirmationCode) => this.setState({confirmationCode})}
             value={ this.state.confirmationCode }
             keyboardType='numeric'/>
-
-          <Text style={styles.errorText}>
-            {this.state.errorMessage}
-          </Text>
 
           <View style={styles.btnContainer}>
             <TouchableHighlight 
@@ -103,6 +140,15 @@ export default class EmailConfirmation extends Component {
             </TouchableHighlight>
           </View>
 
+          <PopUpDialog
+            showAlert={this.state.showAlert}
+            title={this.state.popUpTitle}
+            message={this.state.errorMessage}
+            cancelText='Dismiss'
+            onCancelPressed={() => {
+              this.setState({ showAlert: false })
+            }}
+          />
       </View>
     );
   }
@@ -125,9 +171,10 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.normal,
     width: "90%",
     backgroundColor: Colors.white,
-    padding: 16,
+    padding: 13,
     marginBottom: 8,
-    borderRadius: 20
+    borderRadius: 20,
+    borderWidth: 4
   },
   btnContainer: {
     flexDirection: 'row',
@@ -146,11 +193,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     color: Colors.white
-  },
-  errorText: {
-    fontFamily: Fonts.normal,
-    fontSize: 16,
-    textAlign: 'center',
-    color: Colors.error
   }
 });

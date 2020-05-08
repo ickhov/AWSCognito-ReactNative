@@ -19,6 +19,8 @@ import {
 import Colors from '../../assets/colors';
 import Fonts from '../../assets/fonts';
 
+import PopUpDialog from '../components/popUpDialog';
+
 import Amplify, { Auth } from 'aws-amplify';
 import awsConfig from '../../src/aws-exports';
 
@@ -29,18 +31,32 @@ export default class ForgotPassword extends Component {
     super(props);
     this.state = {
       email: '',
-      errorMessage: ''
+      errorMessage: '',
+      emailBorderColor: Colors.white,
+      showAlert: false
     };
     
     this.resetPassword = this.resetPassword.bind(this);
   };
 
   resetPassword = () => {
-    Auth.forgotPassword(this.state.email)
-      .then(() => { this.props.navigation.navigate('ResetPassword', { 
-        email: this.state.email 
-      })})
-      .catch(err => { this.setState({ errorMessage: err.message }) })
+    if (this.state.email != '') {
+      Auth.forgotPassword(this.state.email)
+        .then(() => { this.props.navigation.navigate('ResetPassword', { 
+          email: this.state.email 
+        })})
+        .catch(err => { this.setState({ 
+          emailBorderColor: Colors.white,
+          errorMessage: err.message,
+          showAlert: true
+        }) })
+    } else {
+      this.setState({
+        emailBorderColor: Colors.error, 
+        errorMessage: 'Please enter your email.',
+        showAlert: true
+      })
+    }
   }
 
   render() {
@@ -53,16 +69,14 @@ export default class ForgotPassword extends Component {
           <Text style={styles.title}>What's your email?</Text>
 
           <TextInput 
-            style={styles.input}
+            style={[styles.input, {
+              borderColor: this.state.emailBorderColor
+            }]}
             placeholder='Email Address'
             onChangeText={(email) => this.setState({email})}
             value={ this.state.email }
             keyboardType='email-address'
             autoCapitalize='none'/>
-
-          <Text style={styles.errorText}>
-            {this.state.errorMessage}
-          </Text>
 
           <TouchableHighlight 
             style={styles.btn} 
@@ -78,6 +92,15 @@ export default class ForgotPassword extends Component {
             <Text style={styles.btnTextBlack}>Back to Login</Text>
           </TouchableOpacity>
 
+          <PopUpDialog
+            showAlert={this.state.showAlert}
+            title='Something went wrong!'
+            message={this.state.errorMessage}
+            cancelText='Dismiss'
+            onCancelPressed={() => {
+              this.setState({ showAlert: false })
+            }}
+          />
       </View>
     );
   }
@@ -100,9 +123,10 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.normal,
     width: "90%",
     backgroundColor: Colors.white,
-    padding: 16,
+    padding: 13,
     marginBottom: 8,
-    borderRadius: 20
+    borderRadius: 20,
+    borderWidth: 4
   },
   btn: {
     backgroundColor: Colors.dark,
@@ -129,11 +153,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.black,
     textDecorationLine: 'underline'
-  },
-  errorText: {
-    fontFamily: Fonts.normal,
-    fontSize: 16,
-    textAlign: 'center',
-    color: Colors.error
   }
 });
