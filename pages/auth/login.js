@@ -20,6 +20,8 @@ import {
   StatusBar
 } from 'react-native';
 
+import PopUpDialog from '../components/popUpDialog'
+
 import Amplify, { Auth } from 'aws-amplify';
 import awsConfig from '../../src/aws-exports';
 
@@ -31,7 +33,10 @@ export default class Login extends Component {
     this.state = {
       email: '',
       password: '',
-      errorMessage: ''
+      errorMessage: '',
+      emailBorderColor: Colors.white,
+      passwordBorderColor: Colors.white,
+      showAlert: false
     };
     
     this.signInUser = this.signInUser.bind(this);
@@ -41,13 +46,33 @@ export default class Login extends Component {
     if (this.state.email != '' && this.state.password != '') {
       Auth.signIn(this.state.email, this.state.password)
         .then(user => { this.props.navigation.navigate('Feed', {user: user}) })
-        .catch(err => { this.setState({ errorMessage: err.message }) })
-    } else if (this.state.email == '' && this.state.password == '') {
-      this.setState({errorMessage: 'Please enter your email and password'})
-    } else if (this.state.email == '') {
-      this.setState({errorMessage: 'Please enter your email'})
+        .catch(err => { this.setState({ 
+          emailBorderColor: Colors.white,
+          passwordBorderColor: Colors.white,
+          errorMessage: err.message,
+          showAlert: true
+        }) })
     } else {
-      this.setState({errorMessage: 'Please enter your password'})
+      if (this.state.email == '' && this.state.password == '') {
+        this.setState({
+          emailBorderColor: Colors.error, 
+          passwordBorderColor: Colors.error,
+          errorMessage: 'Please enter your email and password.',
+          showAlert: true
+        })
+      } else if (this.state.email == '') {
+        this.setState({
+          emailBorderColor: Colors.error, 
+          errorMessage: 'Please enter your email.',
+          showAlert: true
+        })
+      } else if (this.state.password == '') {
+        this.setState({
+          passwordBorderColor: Colors.error,
+          errorMessage: 'Please enter your password.',
+          showAlert: true
+        })
+      }
     }
   }
 
@@ -61,7 +86,10 @@ export default class Login extends Component {
           <Text style={styles.title}>Welcome to Nookeroo</Text>
 
           <TextInput 
-            style={styles.input}
+            style={[styles.input, {
+              borderColor: this.state.emailBorderColor,
+              borderWidth: 4
+            }]}
             placeholder='Email Address'
             onChangeText={(email) => this.setState({email})}
             value={ this.state.email }
@@ -69,15 +97,14 @@ export default class Login extends Component {
             autoCapitalize='none'/>
 
           <TextInput 
-            style={styles.input}
+            style={[styles.input, {
+              borderColor: this.state.passwordBorderColor,
+              borderWidth: 4
+            }]}
             placeholder='Password'
             secureTextEntry
             onChangeText={(password) => this.setState({password})}
             value={this.state.password}/>
-
-          <Text style={styles.errorText}>
-            {this.state.errorMessage}
-          </Text>
 
           <TouchableHighlight 
             style={styles.btn} 
@@ -99,6 +126,15 @@ export default class Login extends Component {
             <Text style={styles.btnTextBlack}>Reset my password</Text>
           </TouchableOpacity>
 
+          <PopUpDialog
+            showAlert={this.state.showAlert}
+            title='Something went wrong!'
+            message={this.state.errorMessage}
+            cancelText='Dismiss'
+            onCancelPressed={() => {
+              this.setState({ showAlert: false })
+            }}
+          />
       </View>
     );
   }
@@ -121,7 +157,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.normal,
     width: "90%",
     backgroundColor: Colors.white,
-    padding: 16,
+    padding: 13,
     marginBottom: 8,
     borderRadius: 20
   },
@@ -150,11 +186,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.black,
     textDecorationLine: 'underline'
-  },
-  errorText: {
-    fontFamily: Fonts.normal,
-    fontSize: 16,
-    textAlign: 'center',
-    color: Colors.error
   }
 });

@@ -20,6 +20,8 @@ import {
   StatusBar
 } from 'react-native';
 
+import PopUpDialog from '../components/popUpDialog'
+
 import Amplify, { Auth } from 'aws-amplify';
 import awsConfig from '../../src/aws-exports';
 
@@ -81,12 +83,7 @@ export default class SignUp extends Component {
             placeholder='Password'
             secureTextEntry
             onChangeText={(password) => this.setState({password})}
-            value={this.state.password}
-            onFocus={() => { this.setState({errorMessage: 'Passwords must be at least 8 characters and contain lowercase and uppercase letters, special characters, and numbers'}) }}/>
-
-          <Text style={styles.errorText}>
-            {this.state.errorMessage}
-          </Text>
+            value={this.state.password}/>
 
           <TouchableHighlight 
             style={styles.btn} 
@@ -153,11 +150,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.black,
     textDecorationLine: 'underline'
-  },
-  errorText: {
-    fontFamily: Fonts.normal,
-    fontSize: 16,
-    textAlign: 'center',
-    color: Colors.error
   }
 });
