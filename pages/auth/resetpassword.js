@@ -20,6 +20,8 @@ import {
   StatusBar
 } from 'react-native';
 
+import PopUpDialog from '../components/popUpDialog';
+
 import Amplify, { Auth } from 'aws-amplify';
 import awsConfig from '../../src/aws-exports';
 
@@ -33,7 +35,11 @@ export default class ResetPassword extends Component {
       email: this.props.route.params.email,
       resetCode: '',
       newPassword: '',
-      errorMessage: ''
+      errorMessage: '',
+      popUpTitle: '',
+      resetCodeBorderColor: Colors.white,
+      newPasswordBorderColor: Colors.white,
+      showAlert: false
     };
     
     this.resetPassword = this.resetPassword.bind(this);
@@ -41,14 +47,54 @@ export default class ResetPassword extends Component {
   };
 
   resetPassword = () => {
-    Auth.forgotPasswordSubmit(this.state.email, this.state.resetCode, this.state.newPassword)
-      .then(() => this.props.navigation.navigate('Login'))
-      .catch(err => { this.setState({ errorMessage: err.message }) })
+    if (this.state.resetCode != '' && this.state.newPassword != '') {
+      Auth.forgotPasswordSubmit(this.state.email, this.state.resetCode, this.state.newPassword)
+        .then(() => this.props.navigation.navigate('Login'))
+        .catch(err => { this.setState({ 
+          resetCodeBorderColor: Colors.white, 
+          newPasswordBorderColor: Colors.white,
+          errorMessage: err.message,
+          popUpTitle: 'Something went wrong!',
+          showAlert: true
+        }) })
+    } else if (this.state.resetCode == '' && this.state.newPassword == '') {
+      this.setState({
+        resetCodeBorderColor: Colors.error, 
+        newPasswordBorderColor: Colors.error,
+        errorMessage: 'Please enter your reset code and new password.',
+        popUpTitle: 'Something went wrong!',
+        showAlert: true
+      })
+    } else if (this.state.resetCode == '') {
+      this.setState({
+        resetCodeBorderColor: Colors.error, 
+        newPasswordBorderColor: Colors.white,
+        errorMessage: 'Please enter your reset code.',
+        popUpTitle: 'Something went wrong!',
+        showAlert: true
+      })
+    } else if (this.state.newPassword == '') {
+      this.setState({
+        resetCodeBorderColor: Colors.white,
+        newPasswordBorderColor: Colors.error,
+        errorMessage: 'Please enter a new password.',
+        popUpTitle: 'Something went wrong!',
+        showAlert: true
+      })
+    }
   }
 
   resendCode = () => {
     Auth.forgotPassword(this.state.email)
-      .catch(err => { this.setState({ errorMessage: err.message }) })
+      .then(() => this.setState({ 
+        errorMessage: 'Your new reset code has been sent.',
+        popUpTitle: 'Success',
+        showAlert: true
+      }))
+      .catch(err => { this.setState({ 
+        errorMessage: err.message,
+        showAlert: true
+      }) })
   }
 
   render() {
@@ -61,22 +107,22 @@ export default class ResetPassword extends Component {
           <Text style={styles.title}>Let's set a new password</Text>
 
           <TextInput 
-            style={styles.input}
+            style={[styles.input, {
+              borderColor: this.state.resetCodeBorderColor
+            }]}
             placeholder='Reset Code'
             onChangeText={(resetCode) => this.setState({resetCode})}
             value={ this.state.resetCode }
             keyboardType='numeric'/>
 
           <TextInput 
-            style={styles.input}
+            style={[styles.input, {
+              borderColor: this.state.newPasswordBorderColor
+            }]}
             placeholder='Password'
             secureTextEntry
             onChangeText={(newPassword) => this.setState({newPassword})}
             value={this.state.newPassword}/>
-
-          <Text style={styles.errorText}>
-            {this.state.errorMessage}
-          </Text>
 
           <View style={styles.btnContainer}>
             <TouchableHighlight 
@@ -102,6 +148,15 @@ export default class ResetPassword extends Component {
             <Text style={styles.btnTextBlack}>Back to Login</Text>
           </TouchableOpacity>
 
+          <PopUpDialog
+            showAlert={this.state.showAlert}
+            title={this.state.popUpTitle}
+            message={this.state.errorMessage}
+            cancelText='Dismiss'
+            onCancelPressed={() => {
+              this.setState({ showAlert: false })
+            }}
+          />
       </View>
     );
   }
@@ -124,9 +179,10 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.normal,
     width: "90%",
     backgroundColor: Colors.white,
-    padding: 16,
+    padding: 13,
     marginBottom: 8,
-    borderRadius: 20
+    borderRadius: 20,
+    borderWidth: 4
   },
   btnContainer: {
     flexDirection: 'row',
@@ -158,11 +214,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.black,
     textDecorationLine: 'underline'
-  },
-  errorText: {
-    fontFamily: Fonts.normal,
-    fontSize: 16,
-    textAlign: 'center',
-    color: Colors.error
   }
 });

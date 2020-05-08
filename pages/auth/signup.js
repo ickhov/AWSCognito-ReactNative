@@ -20,7 +20,7 @@ import {
   StatusBar
 } from 'react-native';
 
-import PopUpDialog from '../components/popUpDialog'
+import PopUpDialog from '../components/popUpDialog';
 
 import Amplify, { Auth } from 'aws-amplify';
 import awsConfig from '../../src/aws-exports';
@@ -33,7 +33,10 @@ export default class SignUp extends Component {
     this.state = {
       email: '',
       password: '',
-      errorMessage: ''
+      errorMessage: '',
+      emailBorderColor: Colors.white,
+      passwordBorderColor: Colors.white,
+      showAlert: false
     };
     
     this.signUpUser = this.signUpUser.bind(this);
@@ -51,13 +54,33 @@ export default class SignUp extends Component {
         .then(data => { this.props.navigation.navigate('EmailConfirmation', { 
           email: this.state.email 
         })})
-        .catch(err => { this.setState({ errorMessage: err.message }) })
+        .catch(err => { this.setState({ 
+          emailBorderColor: Colors.white,
+          passwordBorderColor: Colors.white,
+          errorMessage: err.message,
+          showAlert: true
+        }) })
     } else if (this.state.email == '' && this.state.password == '') {
-      this.setState({errorMessage: 'Please enter an email and a password'})
+      this.setState({
+        emailBorderColor: Colors.error, 
+        passwordBorderColor: Colors.error,
+        errorMessage: 'Please enter an email and a password.',
+        showAlert: true
+      })
     } else if (this.state.email == '') {
-      this.setState({errorMessage: 'Please enter an email'})
-    } else {
-      this.setState({errorMessage: 'Please enter a password'})
+      this.setState({
+        emailBorderColor: Colors.error, 
+        passwordBorderColor: Colors.white,
+        errorMessage: 'Please enter your email.',
+        showAlert: true
+      })
+    } else if (this.state.password == '') {
+      this.setState({
+        emailBorderColor: Colors.white,
+        passwordBorderColor: Colors.error,
+        errorMessage: 'Please enter your password.',
+        showAlert: true
+      })
     }
   }
 
@@ -71,7 +94,9 @@ export default class SignUp extends Component {
           <Text style={styles.title}>Create a Nookeroo Account</Text>
 
           <TextInput 
-            style={styles.input}
+            style={[styles.input, {
+              borderColor: this.state.emailBorderColor
+            }]}
             placeholder='Email Address'
             onChangeText={(email) => this.setState({email})}
             value={ this.state.email }
@@ -79,7 +104,9 @@ export default class SignUp extends Component {
             autoCapitalize='none'/>
 
           <TextInput 
-            style={styles.input}
+            style={[styles.input, {
+              borderColor: this.state.passwordBorderColor
+            }]}
             placeholder='Password'
             secureTextEntry
             onChangeText={(password) => this.setState({password})}
@@ -99,6 +126,15 @@ export default class SignUp extends Component {
             <Text style={styles.btnTextBlack}>Already have an account? Log In Here</Text>
           </TouchableOpacity>
 
+          <PopUpDialog
+            showAlert={this.state.showAlert}
+            title='Something went wrong!'
+            message={this.state.errorMessage}
+            cancelText='Dismiss'
+            onCancelPressed={() => {
+              this.setState({ showAlert: false })
+            }}
+          />
       </View>
     );
   }
@@ -121,9 +157,10 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.normal,
     width: "90%",
     backgroundColor: Colors.white,
-    padding: 16,
+    padding: 13,
     marginBottom: 8,
-    borderRadius: 20
+    borderRadius: 20,
+    borderWidth: 4
   },
   btn: {
     backgroundColor: Colors.dark,
