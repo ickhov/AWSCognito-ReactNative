@@ -3,8 +3,9 @@
  */
 
 import React, { Component } from 'react';
-import Colors from '../../assets/colors'
-import Fonts from '../../assets/fonts'
+import Colors from '../../assets/colors';
+import Fonts from '../../assets/fonts';
+import { TouchableWithoutFeedback, Keyboard } from 'react-native';
 
 import {
   StyleSheet,
@@ -42,6 +43,8 @@ export default class EmailConfirmation extends Component {
   };
 
   confirmUser = () => {
+    Keyboard.dismiss();
+
     if (this.state.email != '' && this.state.confirmationCode != '') {
       Auth.confirmSignUp(this.state.email, this.state.confirmationCode)
         .then(() => { this.props.navigation.navigate('Feed') })
@@ -80,6 +83,8 @@ export default class EmailConfirmation extends Component {
   }
 
   resendCode = () => {
+    Keyboard.dismiss();
+    
     Auth.resendSignUp(this.state.email)
       .then(() => this.setState({ 
         errorMessage: 'Your new confirmation code has been sent.',
@@ -96,6 +101,7 @@ export default class EmailConfirmation extends Component {
 
   render() {
     return (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
           <StatusBar 
             backgroundColor="#ffa24e" 
@@ -111,7 +117,8 @@ export default class EmailConfirmation extends Component {
             onChangeText={(email) => this.setState({email})}
             value={ this.state.email }
             keyboardType='email-address'
-            autoCapitalize='none'/>
+            autoCapitalize='none'
+            returnKeyType='done'/>
 
           <TextInput 
             style={[styles.input, {
@@ -120,7 +127,8 @@ export default class EmailConfirmation extends Component {
             placeholder='Confirmation Code'
             onChangeText={(confirmationCode) => this.setState({confirmationCode})}
             value={ this.state.confirmationCode }
-            keyboardType='numeric'/>
+            keyboardType='numeric'
+            returnKeyType='done'/>
 
           <View style={styles.btnContainer}>
             <TouchableHighlight 
@@ -150,6 +158,7 @@ export default class EmailConfirmation extends Component {
             }}
           />
       </View>
+      </TouchableWithoutFeedback>
     );
   }
 };

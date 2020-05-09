@@ -7,8 +7,9 @@
  */
 
 import React, { Component } from 'react';
-import Colors from '../../assets/colors'
-import Fonts from '../../assets/fonts'
+import Colors from '../../assets/colors';
+import Fonts from '../../assets/fonts';
+import { TouchableWithoutFeedback, Keyboard } from 'react-native';
 
 import {
   StyleSheet,
@@ -47,6 +48,8 @@ export default class ResetPassword extends Component {
   };
 
   resetPassword = () => {
+    Keyboard.dismiss();
+
     if (this.state.resetCode != '' && this.state.newPassword != '') {
       Auth.forgotPasswordSubmit(this.state.email, this.state.resetCode, this.state.newPassword)
         .then(() => this.props.navigation.navigate('Login'))
@@ -85,6 +88,8 @@ export default class ResetPassword extends Component {
   }
 
   resendCode = () => {
+    Keyboard.dismiss();
+
     Auth.forgotPassword(this.state.email)
       .then(() => this.setState({ 
         errorMessage: 'Your new reset code has been sent.',
@@ -99,6 +104,7 @@ export default class ResetPassword extends Component {
 
   render() {
     return (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
           <StatusBar 
             backgroundColor="#ffa24e" 
@@ -113,7 +119,8 @@ export default class ResetPassword extends Component {
             placeholder='Reset Code'
             onChangeText={(resetCode) => this.setState({resetCode})}
             value={ this.state.resetCode }
-            keyboardType='numeric'/>
+            keyboardType='numeric'
+            returnKeyType='done'/>
 
           <TextInput 
             style={[styles.input, {
@@ -122,7 +129,9 @@ export default class ResetPassword extends Component {
             placeholder='Password'
             secureTextEntry
             onChangeText={(newPassword) => this.setState({newPassword})}
-            value={this.state.newPassword}/>
+            value={this.state.newPassword}
+            returnKeyType='done'
+            blurOnSubmit={false}/>
 
           <View style={styles.btnContainer}>
             <TouchableHighlight 
@@ -158,6 +167,7 @@ export default class ResetPassword extends Component {
             }}
           />
       </View>
+      </TouchableWithoutFeedback>
     );
   }
 };
