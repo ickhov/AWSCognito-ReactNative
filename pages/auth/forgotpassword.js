@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 import Colors from '../../assets/colors';
 import Fonts from '../../assets/fonts';
+import { TouchableWithoutFeedback, Keyboard } from 'react-native';
 
 import PopUpDialog from '../components/popUpDialog';
 
@@ -40,6 +41,8 @@ export default class ForgotPassword extends Component {
   };
 
   resetPassword = () => {
+    Keyboard.dismiss();
+    
     if (this.state.email != '') {
       Auth.forgotPassword(this.state.email)
         .then(() => { this.props.navigation.navigate('ResetPassword', { 
@@ -61,6 +64,7 @@ export default class ForgotPassword extends Component {
 
   render() {
     return (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
           <StatusBar 
             backgroundColor="#ffa24e" 
@@ -76,7 +80,8 @@ export default class ForgotPassword extends Component {
             onChangeText={(email) => this.setState({email})}
             value={ this.state.email }
             keyboardType='email-address'
-            autoCapitalize='none'/>
+            autoCapitalize='none'
+            returnKeyType='done'/>
 
           <TouchableHighlight 
             style={styles.btn} 
@@ -102,6 +107,7 @@ export default class ForgotPassword extends Component {
             }}
           />
       </View>
+      </TouchableWithoutFeedback>
     );
   }
 };

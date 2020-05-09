@@ -6,26 +6,20 @@
  * @flow strict-local
  */
 
-import React, { Component } from 'react';
-import Colors from '../../assets/colors'
-import Fonts from '../../assets/fonts'
-
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableHighlight,
-  StatusBar
-} from 'react-native';
-
-import PopUpDialog from '../components/popUpDialog';
-
 import Amplify, { Auth } from 'aws-amplify';
+import React, { Component } from 'react';
+import { StatusBar, StyleSheet, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from 'react-native';
+import Colors from '../../assets/colors';
+import Fonts from '../../assets/fonts';
 import awsConfig from '../../src/aws-exports';
+import PopUpDialog from '../components/popUpDialog';
+import { TouchableWithoutFeedback, Keyboard } from 'react-native';
 
 Amplify.configure({Auth: awsConfig});
+
+// aws cognito requires password to be at least 8 characters
+// and contains lowercase and uppercase letters, and a number
+const passwordRequirement = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])\S{8,99}$/
 
 export default class SignUp extends Component {
   constructor(props) {
@@ -43,23 +37,34 @@ export default class SignUp extends Component {
   };
 
   signUpUser = () => {
+    Keyboard.dismiss();
+
     if (this.state.email != '' && this.state.password != '') {
-      Auth.signUp({
-        username: this.state.email,
-        password: this.state.password,
-        attributes: {
-          email: this.state.email
-        }
-      })
-        .then(data => { this.props.navigation.navigate('EmailConfirmation', { 
-          email: this.state.email 
-        })})
-        .catch(err => { this.setState({ 
+      if (passwordRequirement.test(this.state.password)) {
+        Auth.signUp({
+          username: this.state.email,
+          password: this.state.password,
+          attributes: {
+            email: this.state.email
+          }
+        })
+          .then(() => { this.props.navigation.navigate('EmailConfirmation', { 
+            email: this.state.email 
+          })})
+          .catch(err => { this.setState({ 
+            emailBorderColor: Colors.white,
+            passwordBorderColor: Colors.white,
+            errorMessage: err.message,
+            showAlert: true
+          }) })
+      } else {
+        this.setState({
           emailBorderColor: Colors.white,
-          passwordBorderColor: Colors.white,
-          errorMessage: err.message,
+          passwordBorderColor: Colors.error,
+          errorMessage: 'Password must be at least 8 characters and have an uppercase letter, a lowercase letter, and a number.',
           showAlert: true
-        }) })
+        })
+      }
     } else if (this.state.email == '' && this.state.password == '') {
       this.setState({
         emailBorderColor: Colors.error, 
@@ -86,6 +91,7 @@ export default class SignUp extends Component {
 
   render() {
     return (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
           <StatusBar 
             backgroundColor="#ffa24e" 
@@ -101,7 +107,8 @@ export default class SignUp extends Component {
             onChangeText={(email) => this.setState({email})}
             value={ this.state.email }
             keyboardType='email-address'
-            autoCapitalize='none'/>
+            autoCapitalize='none'
+            returnKeyType='done'/>
 
           <TextInput 
             style={[styles.input, {
@@ -110,7 +117,9 @@ export default class SignUp extends Component {
             placeholder='Password'
             secureTextEntry
             onChangeText={(password) => this.setState({password})}
-            value={this.state.password}/>
+            value={this.state.password}
+            returnKeyType='done'
+            blurOnSubmit={false}/>
 
           <TouchableHighlight 
             style={styles.btn} 
@@ -136,6 +145,7 @@ export default class SignUp extends Component {
             }}
           />
       </View>
+      </TouchableWithoutFeedback>
     );
   }
 };

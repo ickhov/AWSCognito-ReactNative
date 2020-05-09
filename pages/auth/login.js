@@ -7,8 +7,9 @@
  */
 
 import React, { Component } from 'react';
-import Colors from '../../assets/colors'
-import Fonts from '../../assets/fonts'
+import Colors from '../../assets/colors';
+import Fonts from '../../assets/fonts';
+import { TouchableWithoutFeedback, Keyboard } from 'react-native';
 
 import {
   StyleSheet,
@@ -43,6 +44,8 @@ export default class Login extends Component {
   };
 
   signInUser = () => {
+    Keyboard.dismiss();
+
     if (this.state.email != '' && this.state.password != '') {
       Auth.signIn(this.state.email, this.state.password)
         .then(user => { this.props.navigation.navigate('Feed', {user: user}) })
@@ -78,6 +81,7 @@ export default class Login extends Component {
 
   render() {
     return (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
           <StatusBar 
             backgroundColor="#ffa24e" 
@@ -93,7 +97,8 @@ export default class Login extends Component {
             onChangeText={(email) => this.setState({email})}
             value={ this.state.email }
             keyboardType='email-address'
-            autoCapitalize='none'/>
+            autoCapitalize='none'
+            returnKeyType='done'/>
 
           <TextInput 
             style={[styles.input, {
@@ -102,7 +107,9 @@ export default class Login extends Component {
             placeholder='Password'
             secureTextEntry
             onChangeText={(password) => this.setState({password})}
-            value={this.state.password}/>
+            value={this.state.password}
+            returnKeyType='done'
+            blurOnSubmit={false}/>
 
           <TouchableHighlight 
             style={styles.btn} 
@@ -134,6 +141,7 @@ export default class Login extends Component {
             }}
           />
       </View>
+      </TouchableWithoutFeedback>
     );
   }
 };
