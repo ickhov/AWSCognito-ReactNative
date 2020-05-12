@@ -1,0 +1,6 @@
+module Pods_Nookeroo {
+  umbrella header "Pods-Nookeroo-umbrella.h"
+
+  export *
+  module * { export * }
+}

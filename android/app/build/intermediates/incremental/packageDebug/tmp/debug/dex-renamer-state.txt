@@ -1,0 +1,4 @@
+#Mon May 11 14:07:42 PDT 2020
+base.0=/Users/ickhov/Desktop/nookeroo/android/app/build/intermediates/dex/debug/mergeDexDebug/out/classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
