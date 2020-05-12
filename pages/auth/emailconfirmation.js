@@ -18,6 +18,7 @@ import {
 
 import PopUpDialog from '../components/popUpDialog';
 
+// init AWS Cognito
 import Amplify, { Auth } from 'aws-amplify';
 import awsConfig from '../../src/aws-exports';
 
@@ -28,7 +29,7 @@ export default class EmailConfirmation extends Component {
     super(props);
 
     this.state = {
-      // grab the email from the sign up page
+      // grab the email from the sign up page and set default for the rest
       email: this.props.route.params.email,
       confirmationCode: '',
       errorMessage: '',
@@ -42,9 +43,10 @@ export default class EmailConfirmation extends Component {
     this.resendCode = this.resendCode.bind(this);
   };
 
+  // confirm emails using the email and code fields
   confirmUser = () => {
     Keyboard.dismiss();
-
+    // check to make sure the email and code fields are filled in
     if (this.state.email != '' && this.state.confirmationCode != '') {
       Auth.confirmSignUp(this.state.email, this.state.confirmationCode)
         .then(() => { this.props.navigation.navigate('Feed') })
@@ -82,9 +84,10 @@ export default class EmailConfirmation extends Component {
     }
   }
 
+  // resend the code in case the user didn't get it the first time
   resendCode = () => {
     Keyboard.dismiss();
-    
+    // no need to check if we have email since we checked in the last screen
     Auth.resendSignUp(this.state.email)
       .then(() => this.setState({ 
         errorMessage: 'Your new confirmation code has been sent.',

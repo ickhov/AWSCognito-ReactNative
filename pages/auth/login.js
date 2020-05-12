@@ -1,6 +1,5 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * Login page
  *
  * @format
  * @flow strict-local
@@ -23,6 +22,7 @@ import {
 
 import PopUpDialog from '../components/popUpDialog';
 
+// init AWS Cognito
 import Amplify, { Auth } from 'aws-amplify';
 import awsConfig from '../../src/aws-exports';
 
@@ -43,12 +43,13 @@ export default class Login extends Component {
     this.signInUser = this.signInUser.bind(this);
   };
 
+  // sign in the user
   signInUser = () => {
     Keyboard.dismiss();
-
+    // check to make sure email and password are filled in
     if (this.state.email != '' && this.state.password != '') {
       Auth.signIn(this.state.email, this.state.password)
-        .then(user => { this.props.navigation.navigate('Feed', {user: user}) })
+        .then(user => { this.props.navigation.navigate('App', {user: user}) })
         .catch(err => { this.setState({ 
           emailBorderColor: Colors.white,
           passwordBorderColor: Colors.white,

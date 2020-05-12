@@ -1,11 +1,11 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * Sign up page
  *
  * @format
  * @flow strict-local
  */
 
+ // init AWS Cognito
 import Amplify, { Auth } from 'aws-amplify';
 import React, { Component } from 'react';
 import { StatusBar, StyleSheet, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from 'react-native';
@@ -36,9 +36,10 @@ export default class SignUp extends Component {
     this.signUpUser = this.signUpUser.bind(this);
   };
 
+  // sign up the user using email and password
   signUpUser = () => {
     Keyboard.dismiss();
-
+    // check to make sure email and pasword are filled in
     if (this.state.email != '' && this.state.password != '') {
       if (passwordRequirement.test(this.state.password)) {
         Auth.signUp({

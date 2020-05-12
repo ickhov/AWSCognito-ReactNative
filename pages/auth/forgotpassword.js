@@ -1,6 +1,5 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * Forgot password page
  *
  * @format
  * @flow strict-local
@@ -22,6 +21,7 @@ import { TouchableWithoutFeedback, Keyboard } from 'react-native';
 
 import PopUpDialog from '../components/popUpDialog';
 
+// init AWS Cognito
 import Amplify, { Auth } from 'aws-amplify';
 import awsConfig from '../../src/aws-exports';
 
@@ -40,9 +40,10 @@ export default class ForgotPassword extends Component {
     this.resetPassword = this.resetPassword.bind(this);
   };
 
+  // use the email to send a code to reset password
   resetPassword = () => {
     Keyboard.dismiss();
-    
+    // check to make sure email is filled in
     if (this.state.email != '') {
       Auth.forgotPassword(this.state.email)
         .then(() => { this.props.navigation.navigate('ResetPassword', { 

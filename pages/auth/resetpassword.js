@@ -1,6 +1,5 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * Reset password page
  *
  * @format
  * @flow strict-local
@@ -23,6 +22,7 @@ import {
 
 import PopUpDialog from '../components/popUpDialog';
 
+// init AWS Cognito
 import Amplify, { Auth } from 'aws-amplify';
 import awsConfig from '../../src/aws-exports';
 
@@ -33,6 +33,7 @@ export default class ResetPassword extends Component {
     super(props);
 
     this.state = {
+      // grab the email from the forgotpassword screen
       email: this.props.route.params.email,
       resetCode: '',
       newPassword: '',
@@ -47,9 +48,10 @@ export default class ResetPassword extends Component {
     this.resendCode = this.resendCode.bind(this);
   };
 
+  // use the email and code to validate and set the new password
   resetPassword = () => {
     Keyboard.dismiss();
-
+    // ensure that the code and new password are filled in
     if (this.state.resetCode != '' && this.state.newPassword != '') {
       Auth.forgotPasswordSubmit(this.state.email, this.state.resetCode, this.state.newPassword)
         .then(() => this.props.navigation.navigate('Login'))
@@ -87,9 +89,10 @@ export default class ResetPassword extends Component {
     }
   }
 
+  // resend the reset code
   resendCode = () => {
     Keyboard.dismiss();
-
+    // no need to validate email since we checked it in the last screen
     Auth.forgotPassword(this.state.email)
       .then(() => this.setState({ 
         errorMessage: 'Your new reset code has been sent.',
