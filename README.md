@@ -1,7 +1,7 @@
 # Nookeroo
 
 ## Usage
-Make sure to call "npm install" to set up the environment. Use "npm run ios" or "npm run android" to run the example. When running android, make sure that you have an emulator open before calling "npm run android".
+Make sure to call "npm install" to set up the environment. Fill in the information in the file aws-exports.js in the src folder. Use "npm run ios" or "npm run android" to run the example. When running android, make sure that you have an emulator open before calling "npm run android".
 
 ## Screenshots
 <table style="width:100%">
