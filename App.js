@@ -57,7 +57,7 @@ const App = () => {
   return (
     <>
       <NavigationContainer>
-        <Profile/>
+        <MainStack/>
       </NavigationContainer>
     </>
   );
